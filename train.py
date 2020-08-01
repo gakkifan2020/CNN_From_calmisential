@@ -7,6 +7,7 @@ import math
 from models import mobilenet_v1, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_small, \
     efficientnet, resnext, inception_v4, inception_resnet_v1, inception_resnet_v2, \
     se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext
+import matplotlib.pyplot as plt
 
 
 def get_model():
@@ -104,11 +105,13 @@ def process_features(features, data_augmentation):
 
 
 if __name__ == '__main__':
+    print(tf.__name__, ": ", tf.__version__, sep="")
     # GPU settings
     gpus = tf.config.list_physical_devices("GPU")
     if gpus:
         for gpu in gpus:
             tf.config.experimental.set_memory_growth(gpu, True)
+    print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
@@ -147,8 +150,16 @@ if __name__ == '__main__':
         valid_loss.update_state(values=v_loss)
         valid_accuracy.update_state(y_true=label_batch, y_pred=predictions)
 
+    history = {}
+    history["accuracy"] = []
+    history["val_accuracy"] = []
+
     # start training
     for epoch in range(EPOCHS):
+        train_loss.reset_states()
+        train_accuracy.reset_states()
+        valid_loss.reset_states()
+        valid_accuracy.reset_states()
         step = 0
         for features in train_dataset:
             step += 1
@@ -160,10 +171,12 @@ if __name__ == '__main__':
                                                                                      math.ceil(train_count / BATCH_SIZE),
                                                                                      train_loss.result().numpy(),
                                                                                      train_accuracy.result().numpy()))
+            history["accuracy"].append(train_accuracy.result().numpy())
 
         for features in valid_dataset:
             valid_images, valid_labels = process_features(features, data_augmentation=False)
             valid_step(valid_images, valid_labels)
+            history["val_accuracy"].append(valid_accuracy.result().numpy())
 
         print("Epoch: {}/{}, train loss: {:.5f}, train accuracy: {:.5f}, "
               "valid loss: {:.5f}, valid accuracy: {:.5f}".format(epoch,
@@ -172,10 +185,9 @@ if __name__ == '__main__':
                                                                   train_accuracy.result().numpy(),
                                                                   valid_loss.result().numpy(),
                                                                   valid_accuracy.result().numpy()))
-        train_loss.reset_states()
-        train_accuracy.reset_states()
-        valid_loss.reset_states()
-        valid_accuracy.reset_states()
+
+
+
 
         if epoch % save_every_n_epoch == 0:
             model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
@@ -184,6 +196,10 @@ if __name__ == '__main__':
     # save weights
     model.save_weights(filepath=save_model_dir+"model", save_format='tf')
 
+    plt.plot(history['accuracy'])
+    plt.plot(history['val_accuracy'])
+    plt.legend(['training', 'validation'], loc='upper left')
+    plt.show()
     # save the whole model
     # tf.saved_model.save(model, save_model_dir)
 
