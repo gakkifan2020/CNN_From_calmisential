@@ -18,6 +18,7 @@ def load_and_preprocess_image(image_raw, data_augmentation=False):
         image = tf.image.random_brightness(image=image, max_delta=0.5)
     else:
         image = tf.image.resize(image_tensor, [IMAGE_HEIGHT, IMAGE_WIDTH])
+    image = image / 255.0
 
     return image
 
