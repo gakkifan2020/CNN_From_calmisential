@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function
+import os
 import tensorflow as tf
 from configuration import IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS, \
     EPOCHS, BATCH_SIZE, save_model_dir, model_index, save_every_n_epoch
@@ -120,10 +120,14 @@ if __name__ == '__main__':
 
     # create model
     model = get_model()
+    checkpoint_save_path = "./checkpoint/ResNet18.ckpt"
+    if os.path.exists(checkpoint_save_path + '.index'):
+        print('-------------load the model-----------------')
+        model.load_weights(checkpoint_save_path)
     print_model_summary(network=model)
 
     # define loss and optimizer
-    loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
+    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
     # optimizer = tf.keras.optimizers.RMSprop()
     optimizer = tf.keras.optimizers.Adadelta()
 
