@@ -6,7 +6,7 @@ from prepare_data import generate_datasets, load_and_preprocess_image
 import math
 from models import mobilenet_v1, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_small, \
     efficientnet, resnext, inception_v4, inception_resnet_v1, inception_resnet_v2, \
-    se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext, resnet_trained
+    se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext
 import matplotlib.pyplot as plt
 
 
@@ -122,7 +122,8 @@ if __name__ == '__main__':
     print_model_summary(network=model)
 
     # define loss and optimizer
-    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+    # loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False, reduction=tf.keras.losses.Reduction.SUM)
     # optimizer = tf.keras.optimizers.RMSprop()
     optimizer = tf.keras.optimizers.Adadelta()
 
