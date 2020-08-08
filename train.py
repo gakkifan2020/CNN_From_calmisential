@@ -118,16 +118,19 @@ if __name__ == '__main__':
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
 
-    # create model
-    model = get_model()
-    checkpoint_save_path = "./checkpoint/ResNet18.ckpt"
-    if os.path.exists(checkpoint_save_path + '.index'):
+    model_save_path = "./saved_model/.h5"
+    if os.path.exists(model_save_path):
         print('-------------load the model-----------------')
-        model.load_weights(checkpoint_save_path)
+        model = tf.keras.models.load_model(filepath=model_save_path)
+        model.load_weights(checkpoint_save_path, by_name=False)
+    else:
+        # create model
+        model = get_model()
     print_model_summary(network=model)
 
     # define loss and optimizer
-    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+    # loss_object = tf.keras.losses.sparse_categorical_crossentropy
+    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False, reduction=tf.keras.losses.Reduction.SUM)
     # optimizer = tf.keras.optimizers.RMSprop()
     optimizer = tf.keras.optimizers.Adadelta()
 
@@ -196,7 +199,10 @@ if __name__ == '__main__':
 
 
         if epoch % save_every_n_epoch == 0:
-            model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            # Save the model
+            model.save(filepath=save_model_dir+"epoch-{}".format(epoch), save_format=h5)
+            # Save the weights
+            # model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
 
 
     # save weights

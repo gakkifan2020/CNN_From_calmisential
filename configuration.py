@@ -1,13 +1,13 @@
 # some training parameters
 EPOCHS = 1000
-BATCH_SIZE = 16
+BATCH_SIZE = 70
 NUM_CLASSES = 2
 IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
 CHANNELS = 3
 
 save_model_dir = "saved_model/"
-save_every_n_epoch = 10
+save_every_n_epoch = 5
 test_image_dir = ""
 
 dataset_dir = "dataset/"
