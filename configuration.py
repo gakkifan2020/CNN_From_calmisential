@@ -1,13 +1,13 @@
 # some training parameters
 EPOCHS = 1000
-BATCH_SIZE = 16
+BATCH_SIZE = 80
 NUM_CLASSES = 2
 IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
 CHANNELS = 3
 
 save_model_dir = "saved_model/"
-save_every_n_epoch = 2
+save_every_n_epoch = 20
 test_image_dir = ""
 
 dataset_dir = "dataset/"
@@ -43,5 +43,5 @@ TEST_SET_RATIO = 0.2
 # b5 = (1.6, 2.2, 456, 0.4)
 # b6 = (1.8, 2.6, 528, 0.5)
 # b7 = (2.0, 3.1, 600, 0.5)
-model_index = 21
+model_index = 29
 

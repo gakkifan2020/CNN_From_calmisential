@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function
+import os
 import tensorflow as tf
 from configuration import IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS, \
     EPOCHS, BATCH_SIZE, save_model_dir, model_index, save_every_n_epoch
@@ -8,7 +8,8 @@ from models import mobilenet_v1, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_
     efficientnet, resnext, inception_v4, inception_resnet_v1, inception_resnet_v2, \
     se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext
 import matplotlib.pyplot as plt
-
+from tensorboard import notebook
+import pandas as pd
 
 
 def get_model():
@@ -117,12 +118,23 @@ if __name__ == '__main__':
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
 
-    # create model
     model = get_model()
+
+    checkpoint_save_path = "./saved_model/resnet_18/epoch-280"
+    if os.path.exists(checkpoint_save_path + '.index'):
+        print('-------------load the model-----------------')
+        model.load_weights(checkpoint_save_path)
+    #
+    # model_save_path = "./saved_model/epoch-50.index"
+    # if os.path.exists(model_save_path):
+    #     print('-------------load the model-----------------')
+    #     model.load_weights(filepath=model_save_path)
+
     print_model_summary(network=model)
 
     # define loss and optimizer
-    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+    # loss_object = tf.keras.losses.sparse_categorical_crossentropy
+    loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False, reduction=tf.keras.losses.Reduction.SUM)
     # optimizer = tf.keras.optimizers.RMSprop()
     optimizer = tf.keras.optimizers.Adadelta()
 
@@ -191,11 +203,12 @@ if __name__ == '__main__':
 
 
         if epoch % save_every_n_epoch == 0:
-            model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            # Save the weights
+            model.save_weights(filepath=save_model_dir+"resnet_18/"+"epoch-{}".format(epoch), save_format='tf')
 
 
     # save weights
-    model.save_weights(filepath=save_model_dir+"model", save_format='tf')
+    model.save_weights(filepath=save_model_dir+"resnet_18/model", save_format='tf')
 
     plt.plot(history['accuracy'])
     plt.plot(history['val_accuracy'])
@@ -209,3 +222,4 @@ if __name__ == '__main__':
     # converter = tf.lite.TFLiteConverter.from_keras_model(model)
     # tflite_model = converter.convert()
     # open("converted_model.tflite", "wb").write(tflite_model)
+
