@@ -1,6 +1,6 @@
 # some training parameters
 EPOCHS = 1000
-BATCH_SIZE = 80
+BATCH_SIZE = 16
 NUM_CLASSES = 2
 IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
@@ -43,5 +43,5 @@ TEST_SET_RATIO = 0.2
 # b5 = (1.6, 2.2, 456, 0.4)
 # b6 = (1.8, 2.6, 528, 0.5)
 # b7 = (2.0, 3.1, 600, 0.5)
-model_index = 29
+model_index = 32
 
