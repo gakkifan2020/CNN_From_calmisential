@@ -131,6 +131,9 @@ if __name__ == '__main__':
         if epoch % save_every_n_epoch == 0:
             # Save the weights
             model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            h5_save_path = 'model.h5'
+            model.save(h5_save_path)
+
 
 
     # save weights
