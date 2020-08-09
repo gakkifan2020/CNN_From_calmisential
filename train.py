@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function
+import os
 import tensorflow as tf
 from configuration import IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS, \
     EPOCHS, BATCH_SIZE, save_model_dir, model_index, save_every_n_epoch
@@ -8,6 +8,8 @@ from models import mobilenet_v1, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_
     efficientnet, resnext, inception_v4, inception_resnet_v1, inception_resnet_v2, \
     se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext
 import matplotlib.pyplot as plt
+from tensorboard import notebook
+import pandas as pd
 
 
 
@@ -119,6 +121,10 @@ if __name__ == '__main__':
 
     # create model
     model = get_model()
+    checkpoint_save_path = "./checkpoint/ResNet18.ckpt"
+    if os.path.exists(checkpoint_save_path + '.index'):
+        print('-------------load the model-----------------')
+        model.load_weights(checkpoint_save_path)
     print_model_summary(network=model)
 
     # define loss and optimizer
