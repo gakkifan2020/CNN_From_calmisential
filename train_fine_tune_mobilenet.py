@@ -143,12 +143,6 @@ if __name__ == '__main__':
                                                                                      train_accuracy.result().numpy()))
             history["accuracy"].append(train_accuracy.result().numpy())
 
-            if step % 20 == 0:
-                # Save the weights
-                model.save_weights(filepath=save_model_dir + "step-{}".format(step), save_format='tf')
-                h5_save_path = 'model.h5'
-                model.save(h5_save_path)
-            
 
         for features in valid_dataset:
             valid_images, valid_labels = process_features(features, data_augmentation=False)
