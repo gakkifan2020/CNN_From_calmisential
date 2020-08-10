@@ -1,9 +1,12 @@
 import os
 import tensorflow as tf
+import numpy as np
 from configuration import IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS, \
     EPOCHS, BATCH_SIZE, save_model_dir, NUM_CLASSES, save_every_n_epoch
 from prepare_data import generate_datasets, load_and_preprocess_image
+from tensorflow.keras.applications.resnet50 import ResNet50
 import math
+from tensorflow.keras import regularizers
 from models import mobilenet_v1, mobilenet_v2, mobilenet_v3_large, mobilenet_v3_small, \
     efficientnet, resnext, inception_v4, inception_resnet_v1, inception_resnet_v2, \
     se_resnet, squeezenet, densenet, shufflenet_v2, resnet, se_resnext
@@ -42,14 +45,39 @@ if __name__ == '__main__':
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
 
-    URL = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4"
-    feature_extractor = hub.KerasLayer(URL,
-                                       input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS))
-    feature_extractor.trainable = False
-    model = tf.keras.Sequential([feature_extractor,
-                                 tf.keras.layers.Dense(NUM_CLASSES, activation="softmax")])
+    IMG_SHAPE = (IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS )
+    # Create the base model from the pre-trained model MobileNet V2
 
-    checkpoint_save_path = "./saved_model/epoch-0"
+
+
+    resnet50_fine_tune = tf.keras.models.Sequential()
+    # resnet50最后一层有1000类，所以在本例中把最后一层去掉（include_top = False）
+    # resnet的倒数第二层是一个三维矩阵，所以无法与全连接层连接，故要pooling
+    # weights = 'imagenet'： 下载一个模型，然后在这个模型的基础上进行训练
+    # weights = 'None'：从头开始训练
+    resnet50_fine_tune.add(ResNet50(include_top=False,
+                                    pooling='avg',
+                                    weights='imagenet'))
+    resnet50_fine_tune.add(tf.keras.layers.Dense(NUM_CLASSES, activation='softmax', kernel_regularizer=regularizers.l2(0.001)))
+    resnet50_fine_tune.layers[0].trainable = False
+
+
+    resnet50_fine_tune.summary()
+    model = resnet50_fine_tune
+
+    # Let's take a look to see how many layers are in the base model
+    print("Number of layers in the base model: ", len(resnet50_fine_tune.layers))
+    # Fine-tune from this layer onwards
+    # fine_tune_at = 100
+
+    # Freeze all the layers before the `fine_tune_at` layer
+    # for layer in base_model.layers[:fine_tune_at]:
+    #     layer.trainable = False
+
+
+
+
+    checkpoint_save_path = "./saved_model/epoch-20"
     if os.path.exists(checkpoint_save_path + '.index'):
         print('-------------load the model-----------------')
         model.load_weights(checkpoint_save_path)
@@ -59,7 +87,7 @@ if __name__ == '__main__':
     #     print('-------------load the model-----------------')
     #     model.load_weights(filepath=model_save_path)
 
-    print_model_summary(network=model)
+    # print_model_summary(network=model)
 
     # define loss and optimizer
     # loss_object = tf.keras.losses.sparse_categorical_crossentropy
@@ -134,6 +162,8 @@ if __name__ == '__main__':
         if epoch % save_every_n_epoch == 0:
             # Save the weights
             model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            h5_save_path = 'model.h5'
+            model.save(h5_save_path)
 
 
     # save weights

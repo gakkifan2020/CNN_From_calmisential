@@ -12,10 +12,14 @@ def load_and_preprocess_image(image_raw, data_augmentation=False):
     if data_augmentation:
         image = tf.image.random_flip_left_right(image=image_tensor)
         image = tf.image.resize_with_crop_or_pad(image=image,
-                                                 target_height=int(IMAGE_HEIGHT * 1.2),
-                                                 target_width=int(IMAGE_WIDTH * 1.2))
+                                                 target_height=int(IMAGE_HEIGHT * 1.4),
+                                                 target_width=int(IMAGE_WIDTH * 1.4))
         image = tf.image.random_crop(value=image, size=[IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS])
-        image = tf.image.random_brightness(image=image, max_delta=0.5)
+        image = tf.image.random_brightness(image=image, max_delta=32. / 255)
+        image = tf.image.random_saturation(image, lower=0.5, upper=1.5)
+        image = tf.image.random_hue(image, 0.2)
+        image = tf.image.random_contrast(image, lower=0.5, upper=1.7)
+        image = tf.image.transpose(image)
     else:
         image = tf.image.resize(image_tensor, [IMAGE_HEIGHT, IMAGE_WIDTH])
     image = image / 255.0
