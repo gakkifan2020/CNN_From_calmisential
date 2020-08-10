@@ -39,14 +39,25 @@ if __name__ == '__main__':
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
 
-    model = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_101/feature_vector/4",
-                                                trainable=True, arguments=dict(batch_norm_momentum=0.99)),
-                                 tf.keras.layers.Dense(NUM_CLASSES, activation='softmax')
-    ])
+    hub_layer = hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_101/feature_vector/4",
+                               trainable=True, arguments=dict(batch_norm_momentum=0.99))
+    dense_layer = tf.keras.layers.Dense
+    model = tf.keras.Sequential()
+    model.add(hub_layer)
+    model.add(dense_layer(NUM_CLASSES, activation='softmax'))
+
+
+
+
+
+    # model = tf.keras.Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_101/feature_vector/4",
+    #                                             trainable=True, arguments=dict(batch_norm_momentum=0.99)),
+    #                              tf.keras.layers.Dense(NUM_CLASSES, activation='softmax')
+    # ])
     model.build([None, 224, 224, 3])
 
 
-    checkpoint_save_path = "./saved_model/epoch-0"
+    checkpoint_save_path = "./saved_model/epoch-15"
     if os.path.exists(checkpoint_save_path + '.index'):
         print('-------------load the model-----------------')
         model.load_weights(checkpoint_save_path)
@@ -124,7 +135,6 @@ if __name__ == '__main__':
                                                                   train_accuracy.result().numpy(),
                                                                   valid_loss.result().numpy(),
                                                                   valid_accuracy.result().numpy()))
-
 
 
 
