@@ -6,9 +6,10 @@ IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
 CHANNELS = 3
 
-save_model_dir = "saved_model/"
+save_pb_model_dir = "./frozen_models2/"
+save_model_dir = "./saved_model/"
 save_every_n_epoch = 1
-test_image_dir = ""
+test_image_dir = "./dataset/test/Female/"
 
 dataset_dir = "dataset/"
 train_dir = dataset_dir + "train"
