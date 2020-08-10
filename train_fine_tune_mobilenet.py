@@ -101,7 +101,7 @@ if __name__ == '__main__':
     valid_loss = tf.keras.metrics.Mean(name='valid_loss')
     valid_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='valid_accuracy')
 
-    @tf.function
+    # @tf.function
     def train_step(image_batch, label_batch):
         with tf.GradientTape() as tape:
             predictions = model(image_batch, training=True)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         train_loss.update_state(values=loss)
         train_accuracy.update_state(y_true=label_batch, y_pred=predictions)
 
-    @tf.function
+    # @tf.function
     def valid_step(image_batch, label_batch):
         predictions = model(image_batch, training=False)
         v_loss = loss_object(label_batch, predictions)
@@ -143,6 +143,13 @@ if __name__ == '__main__':
                                                                                      train_accuracy.result().numpy()))
             history["accuracy"].append(train_accuracy.result().numpy())
 
+            if step % 20 == 0:
+                # Save the weights
+                model.save_weights(filepath=save_model_dir + "step-{}".format(step), save_format='tf')
+                h5_save_path = 'model.h5'
+                model.save(h5_save_path)
+            
+
         for features in valid_dataset:
             valid_images, valid_labels = process_features(features, data_augmentation=False)
             valid_step(valid_images, valid_labels)
@@ -161,8 +168,10 @@ if __name__ == '__main__':
 
         if epoch % save_every_n_epoch == 0:
             # Save the weights
-            # model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
-            tf.keras.models.save_model(model, filepath=save_model_dir+"epoch-{}".format(epoch))
+            model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            h5_save_path = 'model.h5'
+            model.save(h5_save_path)
+
 
 
     # save weights
