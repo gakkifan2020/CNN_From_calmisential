@@ -8,7 +8,7 @@ CHANNELS = 3
 
 save_model_dir = "saved_model/"
 save_every_n_epoch = 1
-test_image_dir = ""
+test_image_dir = "dataset/test/dog/dog.0.jpg"
 
 dataset_dir = "dataset/"
 train_dir = dataset_dir + "train"
