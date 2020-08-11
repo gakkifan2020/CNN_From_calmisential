@@ -1,6 +1,6 @@
 # some training parameters
 EPOCHS = 1000
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 NUM_CLASSES = 2
 IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
@@ -8,7 +8,7 @@ CHANNELS = 3
 
 save_pb_model_dir = "./frozen_models2/"
 save_model_dir = "./saved_model/"
-save_every_n_epoch = 1
+save_every_n_epoch = 10
 test_image_dir = "./dataset/test/Female/"
 
 dataset_dir = "dataset/"
