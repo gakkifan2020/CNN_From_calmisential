@@ -24,7 +24,6 @@ if __name__ == '__main__':
     model = tf.keras.models.load_model('model.h5',
                                        custom_objects={'KerasLayer': hub.KerasLayer, 'Dense': tf.keras.layers.Dense},
                                        compile=False)
-    # model = tf.keras.models.load_model(h5_save_path, compile=False)
     model.summary()
 
     image_raw = tf.io.read_file(filename=test_image_dir)
