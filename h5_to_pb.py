@@ -4,11 +4,12 @@ from tensorflow.python.framework.convert_to_constants import convert_variables_t
 from tensorflow.keras import layers
 def h5_to_pb(h5_save_path):
 
-    model = tf.keras.models.load_model((h5_save_path), custom_objects={'KerasLayer': hub.KerasLayer})
+    model = tf.keras.models.load_model(h5_save_path, custom_objects={'KerasLayer': hub.KerasLayer, 'Dense':tf.keras.layers.Dense}, compile=False)
     # model = tf.keras.models.load_model(h5_save_path, compile=False)
     model.summary()
     full_model = tf.function(lambda Input: model(Input))
-    full_model = full_model.get_concrete_function(tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+    full_model = full_model.get_concrete_function(tf.TensorSpec([None, 224, 224, 3], tf.float32))
+    # full_model = full_model.get_concrete_function(tf.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
 
     # Get frozen ConcreteFunction
     frozen_func = convert_variables_to_constants_v2(full_model)

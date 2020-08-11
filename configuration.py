@@ -7,7 +7,7 @@ IMAGE_WIDTH = 224
 CHANNELS = 3
 
 save_model_dir = "saved_model/"
-save_every_n_epoch = 5
+save_every_n_epoch = 1
 test_image_dir = ""
 
 dataset_dir = "dataset/"
