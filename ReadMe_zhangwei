@@ -1,0 +1,34 @@
+公用模块：
+
+
+程序簇_1 --- 使用本地已有的模型，不修改（数据准备、模型搭建、训练、模型文件保存、重新读取）
+1、configuration
+2、split_dataset
+3、to_tfrecord
+4、prepare_data
+5、 train
+    train_resnet_18
+    train_resnet_101
+
+
+
+
+程序簇_2 --- 使用tensorflow_hub的模型，不修改（数据准备、模型搭建、训练、模型文件保存、重新读取）
+1、configuration
+2、split_dataset
+2、to_tfrecord
+3、prepare_data
+4、train
+5、test_single_image
+6、evaluate
+
+
+程序簇_3 --- 使用tensorflow_hub的模型，并对网络进行了修改（数据准备、模型搭建、训练、模型文件保存、重新读取）
+1、configuration
+2、split_dataset
+2、to_tfrecord
+3、prepare_data
+4、train_transfer_resnet_v2_101
+5、h5_to_pb
+6、use_pb_to_predict
+
