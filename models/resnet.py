@@ -107,3 +107,5 @@ def resnet_101():
 
 def resnet_152():
     return ResNetTypeII(layer_params=[3, 8, 36, 3])
+
+

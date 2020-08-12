@@ -1,6 +1,5 @@
 import tensorflow as tf
 import pathlib
-from scipy import misc
 from configuration import IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS, \
     BATCH_SIZE, train_tfrecord, valid_tfrecord, test_tfrecord
 from parse_tfrecord import get_parsed_dataset
@@ -15,12 +14,8 @@ def load_and_preprocess_image(image_raw, data_augmentation=False):
         image = tf.image.resize_with_crop_or_pad(image=image,
                                                  target_height=int(IMAGE_HEIGHT * 1.4),
                                                  target_width=int(IMAGE_WIDTH * 1.4))
-        image = tf.image.random_crop(value=image, size=[IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS])
-        image = tf.image.random_brightness(image=image, max_delta=32. / 255)
-        image = tf.image.random_saturation(image, lower=0.5, upper=1.5)
-        image = tf.image.random_hue(image, 0.2)
-        image = tf.image.random_contrast(image, lower=0.5, upper=1.7)
-        image = tf.image.transpose(image)
+        # image = tf.image.random_crop(value=image, size=[IMAGE_HEIGHT, IMAGE_WIDTH, CHANNELS])
+        # image = tf.image.random_brightness(image=image, max_delta=0.1)
     else:
         image = tf.image.resize(image_tensor, [IMAGE_HEIGHT, IMAGE_WIDTH])
     image = image / 255.0
@@ -58,9 +53,5 @@ def generate_datasets():
     valid_count = get_the_length_of_dataset(valid_dataset)
     test_count = get_the_length_of_dataset(test_dataset)
 
-    # read the dataset in the form of batch
-    train_dataset = train_dataset.batch(batch_size=BATCH_SIZE)
-    valid_dataset = valid_dataset.batch(batch_size=BATCH_SIZE)
-    test_dataset = test_dataset.batch(batch_size=BATCH_SIZE)
 
     return train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count

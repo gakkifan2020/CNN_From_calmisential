@@ -12,7 +12,6 @@ from tensorboard import notebook
 import pandas as pd
 
 
-
 def get_model():
     if model_index == 0:
         return mobilenet_v1.MobileNetV1()
@@ -119,14 +118,18 @@ if __name__ == '__main__':
     # get the dataset
     train_dataset, valid_dataset, test_dataset, train_count, valid_count, test_count = generate_datasets()
 
-    model_save_path = "./saved_model/.h5"
-    if os.path.exists(model_save_path):
+    model = get_model()
+
+    checkpoint_save_path = "./saved_model/resnet_101/epoch-0"
+    if os.path.exists(checkpoint_save_path + '.index'):
         print('-------------load the model-----------------')
-        model = tf.keras.models.load_model(filepath=model_save_path)
-        model.load_weights(checkpoint_save_path, by_name=False)
-    else:
-        # create model
-        model = get_model()
+        model.load_weights(checkpoint_save_path)
+    #
+    # model_save_path = "./saved_model/epoch-50.index"
+    # if os.path.exists(model_save_path):
+    #     print('-------------load the model-----------------')
+    #     model.load_weights(filepath=model_save_path)
+
     print_model_summary(network=model)
 
     # define loss and optimizer
@@ -200,14 +203,12 @@ if __name__ == '__main__':
 
 
         if epoch % save_every_n_epoch == 0:
-            # Save the model
-            model.save(filepath=save_model_dir+"epoch-{}".format(epoch), save_format=h5)
             # Save the weights
-            # model.save_weights(filepath=save_model_dir+"epoch-{}".format(epoch), save_format='tf')
+            model.save_weights(filepath=save_model_dir+"resnet_101/"+"epoch-{}".format(epoch), save_format='tf')
 
 
     # save weights
-    model.save_weights(filepath=save_model_dir+"model", save_format='tf')
+    model.save_weights(filepath=save_model_dir+"resnet_101/model", save_format='tf')
 
     plt.plot(history['accuracy'])
     plt.plot(history['val_accuracy'])
@@ -221,3 +222,4 @@ if __name__ == '__main__':
     # converter = tf.lite.TFLiteConverter.from_keras_model(model)
     # tflite_model = converter.convert()
     # open("converted_model.tflite", "wb").write(tflite_model)
+
