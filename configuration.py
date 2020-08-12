@@ -6,6 +6,7 @@ IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
 CHANNELS = 3
 
+save_pb_model_dir = "frozen_models2/"
 save_model_dir = "saved_model/"
 save_every_n_epoch = 10
 test_image_dir = ""
